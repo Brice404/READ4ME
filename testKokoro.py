@@ -23,14 +23,20 @@ def load_model():
     kokoro = Kokoro("kokoro-v1.0.onnx", "voices-v1.0.bin")
 
 
-def speak(text, voice=DEFAULT_VOICE, speed=1.0):
-    # Guard against speak() being called before load_model().
+def generate(text, voice=DEFAULT_VOICE, speed=1.0):
     if kokoro is None:
         raise RuntimeError("Model not loaded. Call load_model() first.")
+    return kokoro.create(text, voice=voice, speed=speed, lang="en-us")
 
-    samples, sample_rate = kokoro.create(text, voice=voice, speed=speed, lang="en-us")
+
+def play(samples, sample_rate):
     sd.play(samples, sample_rate)
     sd.wait()
+
+
+def speak(text, voice=DEFAULT_VOICE, speed=1.0):
+    samples, sample_rate = generate(text, voice=voice, speed=speed)
+    play(samples, sample_rate)
 
 
 def stop():

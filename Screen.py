@@ -5,6 +5,8 @@ from PyQt6.QtWidgets import (
 from worker import SpeakWorker
 import testKokoro
 from theme import LIGHT_STYLE, DARK_STYLE
+from PyQt6.QtWidgets import QProgressBar
+from overlay import LoadingOverlay
 
 
 class MainWindow(QMainWindow):
@@ -17,6 +19,10 @@ class MainWindow(QMainWindow):
 
         self.text_input = QTextEdit(self)
         self.text_input.setPlaceholderText("Paste your text here...")
+
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, 0)
+        self.progress_bar.setVisible(False)
 
         # --- Voice picker ---
         self.voice_combo = QComboBox()
@@ -39,7 +45,7 @@ class MainWindow(QMainWindow):
         controls = QHBoxLayout()
         controls.addLayout(voice_row)
         controls.addLayout(speed_row)
-        controls.addStretch()  # push the theme toggle to the right edge
+        controls.addStretch()
 
         # --- Buttons ---
         self.play_button = QPushButton("Play")
@@ -53,7 +59,7 @@ class MainWindow(QMainWindow):
         button_row.addWidget(self.play_button)
         button_row.addWidget(self.stop_button)
 
-        # --- Light/Dark Mode toggle (same line as voice/speed, right-aligned) ---
+        # --- Light/Dark Mode toggle ---
         self.theme_button = QPushButton("🌙 Dark Mode")
         self.theme_button.clicked.connect(self.toggle_theme)
         controls.addWidget(self.theme_button)
@@ -67,21 +73,30 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        # Apply the default (light) theme.
+        #--- Overlay ---
+        self.loading_overlay = LoadingOverlay(self)
+        self.loading_overlay.setGeometry(self.rect())
+
+        # --- Default theme ---
         self.dark_mode = False
         self.setStyleSheet(LIGHT_STYLE)
+        self.loading_overlay.set_dark_mode(self.dark_mode)
+
+        # --- Loading bar --- 
+        layout.addWidget(self.progress_bar)
 
     def on_play(self):
         text = self.text_input.toPlainText()
         if not text.strip():
             return
 
-        # Translate name into Kokoro voice id.
+        # Translates name into Kokoro voice id.
         voice_id = testKokoro.VOICES[self.voice_combo.currentText()]
         speed = self.speed_spin.value()
 
         self.set_playing(True)
         self.worker = SpeakWorker(text, voice=voice_id, speed=speed)
+        self.worker.ready.connect(self.on_ready)
         self.worker.finished.connect(self.on_finished)
         self.worker.error.connect(self.on_error)
         self.worker.start()
@@ -96,12 +111,23 @@ class MainWindow(QMainWindow):
     def on_finished(self):
         self.set_playing(False)
 
+    def on_ready(self):
+        self.loading_overlay.stop()
+
     def set_playing(self, playing):
         self.play_button.setEnabled(not playing)
         self.stop_button.setEnabled(playing)
+        if playing:
+            self.loading_overlay.start()
+        else:
+            self.loading_overlay.stop()
 
     def toggle_theme(self):
-        # Flip the flag, then apply the matching style + button label.
         self.dark_mode = not self.dark_mode
         self.setStyleSheet(DARK_STYLE if self.dark_mode else LIGHT_STYLE)
         self.theme_button.setText("☀️ Light Mode" if self.dark_mode else "🌙 Dark Mode")
+        self.loading_overlay.set_dark_mode(self.dark_mode)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.loading_overlay.setGeometry(self.rect())

@@ -3,6 +3,7 @@ import testKokoro
 
 
 class SpeakWorker(QThread):
+    ready = pyqtSignal()    # fires once audio is generated, BEFORE playback
     finished = pyqtSignal()
     error = pyqtSignal(str)
 
@@ -14,7 +15,15 @@ class SpeakWorker(QThread):
 
     def run(self):
         try:
-            testKokoro.speak(self.text, voice=self.voice, speed=self.speed)
+            # Phase 1: convert text -> audio (slow). Tell the UI to hide the overlay.
+            samples, sample_rate = testKokoro.generate(
+                self.text, voice=self.voice, speed=self.speed
+            )
+            self.ready.emit()
+
+            # Phase 2: play the audio. Only emit finished after playback ends
+            # (or the user hits Stop).
+            testKokoro.play(samples, sample_rate)
         except Exception as e:
             self.error.emit(str(e))
         finally:
