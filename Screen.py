@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QWidget, QComboBox, QDoubleSpinBox, QLabel, QMessageBox,
 )
 from worker import GenerateWorker
-import testKokoro
+import kokoro
 from theme import LIGHT_STYLE, DARK_STYLE
 from overlay import LoadingOverlay
 from playback import AudioPlayer
@@ -11,6 +11,7 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QFileDialog
 import soundfile as sf
+from resource_path import resource_path
 
 
 class MainWindow(QMainWindow):
@@ -20,13 +21,14 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("READ4ME")
         self.setMinimumSize(800, 600)
+        self.setWindowIcon(QIcon(resource_path("icons/appIcon.ico")))
 
         self.text_input = QTextEdit(self)
         self.text_input.setPlaceholderText("Paste your text here...")
 
         # --- Voice picker ---
         self.voice_combo = QComboBox()
-        self.voice_combo.addItems(testKokoro.VOICES.keys())
+        self.voice_combo.addItems(kokoro.VOICES.keys())
 
         voice_row = QHBoxLayout()
         voice_row.addWidget(QLabel("Voice:"))
@@ -59,19 +61,19 @@ class MainWindow(QMainWindow):
         BUTTON_SIZE = QSize(40, 40)
 
         self.play_pause_button = QPushButton()
-        self.play_pause_button.setIcon(QIcon("icons/play.png"))
+        self.play_pause_button.setIcon(QIcon(resource_path("icons/play.png")))
         self.play_pause_button.setIconSize(ICON_SIZE)
         self.play_pause_button.setFixedSize(BUTTON_SIZE)
         self.play_pause_button.clicked.connect(self.on_play_pause)
 
         self.stop_button = QPushButton()
-        self.stop_button.setIcon(QIcon("icons/stop.png"))
+        self.stop_button.setIcon(QIcon(resource_path("icons/stop.png")))
         self.stop_button.setIconSize(ICON_SIZE)
         self.stop_button.setFixedSize(BUTTON_SIZE)
         self.stop_button.clicked.connect(self.on_stop)
 
         self.restart_button = QPushButton()
-        self.restart_button.setIcon(QIcon("icons/restart.png"))
+        self.restart_button.setIcon(QIcon(resource_path("icons/restart.png")))
         self.restart_button.setIconSize(ICON_SIZE)
         self.restart_button.setFixedSize(BUTTON_SIZE)
         self.restart_button.clicked.connect(self.on_restart)
@@ -130,7 +132,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(False)
         self.stop_button.setEnabled(False)
         self.restart_button.setEnabled(False)
-        self.play_pause_button.setIcon(QIcon("icons/play.png"))
+        self.play_pause_button.setIcon(QIcon(resource_path("icons/play.png")))
 
     def enter_converting_state(self):
         self.convert_button.setEnabled(False)
@@ -145,7 +147,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.restart_button.setEnabled(True)
-        self.play_pause_button.setIcon(QIcon("icons/play.png"))
+        self.play_pause_button.setIcon(QIcon(resource_path("icons/play.png")))
 
     def enter_playing_state(self):
         self.convert_button.setEnabled(False)
@@ -153,7 +155,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(True)
         self.stop_button.setEnabled(True)
         self.restart_button.setEnabled(True)
-        self.play_pause_button.setIcon(QIcon("icons/pause.png"))
+        self.play_pause_button.setIcon(QIcon(resource_path("icons/pause.png")))
 
     def enter_paused_state(self):
         self.convert_button.setEnabled(True)
@@ -161,7 +163,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(True)
         self.stop_button.setEnabled(True)
         self.restart_button.setEnabled(True)
-        self.play_pause_button.setIcon(QIcon("icons/play.png"))
+        self.play_pause_button.setIcon(QIcon(resource_path("icons/play.png")))
 
     # --- Convert flow ---
     def on_convert(self):
@@ -174,7 +176,7 @@ class MainWindow(QMainWindow):
         self.enter_converting_state()
         self.loading_overlay.start()
 
-        voice_id = testKokoro.VOICES[self.voice_combo.currentText()]
+        voice_id = kokoro.VOICES[self.voice_combo.currentText()]
         speed = self.speed_spin.value()
 
         self.gen_worker = GenerateWorker(text, voice=voice_id, speed=speed)

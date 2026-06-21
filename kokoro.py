@@ -1,5 +1,6 @@
 from kokoro_onnx import Kokoro
 import sounddevice as sd
+from resource_path import resource_path
 
 kokoro = None
 
@@ -20,7 +21,10 @@ DEFAULT_VOICE = "am_adam"
 
 def load_model():
     global kokoro
-    kokoro = Kokoro("kokoro-v1.0.onnx", "voices-v1.0.bin")
+    kokoro = Kokoro(
+        resource_path("kokoro-v1.0.onnx"),
+        resource_path("voices-v1.0.bin")
+    )
 
 
 def generate(text, voice=DEFAULT_VOICE, speed=1.0):

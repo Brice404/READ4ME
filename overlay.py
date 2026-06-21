@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMovie
+from resource_path import resource_path
+
 
 class LoadingOverlay(QWidget):
     def __init__(self, parent=None):
@@ -11,7 +13,7 @@ class LoadingOverlay(QWidget):
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.spinner_label = QLabel()
-        self.movie = QMovie("icons/loading.gif")
+        self.movie = QMovie(resource_path("icons/loading.gif"))
         self.spinner_label.setMovie(self.movie)
         self.spinner_label.setStyleSheet("background: transparent;")
         layout.addWidget(self.spinner_label, alignment=Qt.AlignmentFlag.AlignCenter)
