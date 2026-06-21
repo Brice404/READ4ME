@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
 )
 from worker import SpeakWorker
 import testKokoro
+from theme import LIGHT_STYLE, DARK_STYLE
 
 
 class MainWindow(QMainWindow):
@@ -34,11 +35,11 @@ class MainWindow(QMainWindow):
         speed_row = QHBoxLayout()
         speed_row.addWidget(QLabel("Speed:"))
         speed_row.addWidget(self.speed_spin)
-        speed_row.addStretch()
 
         controls = QHBoxLayout()
         controls.addLayout(voice_row)
         controls.addLayout(speed_row)
+        controls.addStretch()  # push the theme toggle to the right edge
 
         # --- Buttons ---
         self.play_button = QPushButton("Play")
@@ -52,6 +53,11 @@ class MainWindow(QMainWindow):
         button_row.addWidget(self.play_button)
         button_row.addWidget(self.stop_button)
 
+        # --- Light/Dark Mode toggle (same line as voice/speed, right-aligned) ---
+        self.theme_button = QPushButton("🌙 Dark Mode")
+        self.theme_button.clicked.connect(self.toggle_theme)
+        controls.addWidget(self.theme_button)
+
         layout = QVBoxLayout()
         layout.addLayout(controls)
         layout.addWidget(self.text_input)
@@ -60,6 +66,10 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
+
+        # Apply the default (light) theme.
+        self.dark_mode = False
+        self.setStyleSheet(LIGHT_STYLE)
 
     def on_play(self):
         text = self.text_input.toPlainText()
@@ -89,3 +99,9 @@ class MainWindow(QMainWindow):
     def set_playing(self, playing):
         self.play_button.setEnabled(not playing)
         self.stop_button.setEnabled(playing)
+
+    def toggle_theme(self):
+        # Flip the flag, then apply the matching style + button label.
+        self.dark_mode = not self.dark_mode
+        self.setStyleSheet(DARK_STYLE if self.dark_mode else LIGHT_STYLE)
+        self.theme_button.setText("☀️ Light Mode" if self.dark_mode else "🌙 Dark Mode")

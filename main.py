@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from Screen import MainWindow
+from screen import MainWindow
 import testKokoro
 
 app = QApplication(sys.argv)
