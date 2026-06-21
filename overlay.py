@@ -11,7 +11,7 @@ class LoadingOverlay(QWidget):
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.spinner_label = QLabel()
-        self.movie = QMovie("loading.gif")
+        self.movie = QMovie("icons/loading.gif")
         self.spinner_label.setMovie(self.movie)
         self.spinner_label.setStyleSheet("background: transparent;")
         layout.addWidget(self.spinner_label, alignment=Qt.AlignmentFlag.AlignCenter)

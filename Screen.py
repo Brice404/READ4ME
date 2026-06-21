@@ -59,19 +59,19 @@ class MainWindow(QMainWindow):
         BUTTON_SIZE = QSize(40, 40)
 
         self.play_pause_button = QPushButton()
-        self.play_pause_button.setIcon(QIcon("play.png"))
+        self.play_pause_button.setIcon(QIcon("icons/play.png"))
         self.play_pause_button.setIconSize(ICON_SIZE)
         self.play_pause_button.setFixedSize(BUTTON_SIZE)
         self.play_pause_button.clicked.connect(self.on_play_pause)
 
         self.stop_button = QPushButton()
-        self.stop_button.setIcon(QIcon("stop.png"))
+        self.stop_button.setIcon(QIcon("icons/stop.png"))
         self.stop_button.setIconSize(ICON_SIZE)
         self.stop_button.setFixedSize(BUTTON_SIZE)
         self.stop_button.clicked.connect(self.on_stop)
 
         self.restart_button = QPushButton()
-        self.restart_button.setIcon(QIcon("restart.png"))
+        self.restart_button.setIcon(QIcon("icons/restart.png"))
         self.restart_button.setIconSize(ICON_SIZE)
         self.restart_button.setFixedSize(BUTTON_SIZE)
         self.restart_button.clicked.connect(self.on_restart)
@@ -130,7 +130,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(False)
         self.stop_button.setEnabled(False)
         self.restart_button.setEnabled(False)
-        self.play_pause_button.setIcon(QIcon("play.png"))
+        self.play_pause_button.setIcon(QIcon("icons/play.png"))
 
     def enter_converting_state(self):
         self.convert_button.setEnabled(False)
@@ -145,7 +145,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.restart_button.setEnabled(True)
-        self.play_pause_button.setIcon(QIcon("play.png"))
+        self.play_pause_button.setIcon(QIcon("icons/play.png"))
 
     def enter_playing_state(self):
         self.convert_button.setEnabled(False)
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(True)
         self.stop_button.setEnabled(True)
         self.restart_button.setEnabled(True)
-        self.play_pause_button.setIcon(QIcon("pause.png"))
+        self.play_pause_button.setIcon(QIcon("icons/pause.png"))
 
     def enter_paused_state(self):
         self.convert_button.setEnabled(True)
@@ -161,7 +161,7 @@ class MainWindow(QMainWindow):
         self.play_pause_button.setEnabled(True)
         self.stop_button.setEnabled(True)
         self.restart_button.setEnabled(True)
-        self.play_pause_button.setIcon(QIcon("play.png"))
+        self.play_pause_button.setIcon(QIcon("icons/play.png"))
 
     # --- Convert flow ---
     def on_convert(self):
